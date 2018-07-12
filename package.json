@@ -7,12 +7,14 @@
     "postinstall": "npm run wepback",
     "test": "echo \"Error: no test specified\" && exit 1",
     "webpack": "./node_modules/webpack/bin/webpack.js",
-    "start:dev": "npm run webpack -- -w && nodemon server.js --ignore dist/ --ignore src/"
+    "start:dev": "npm run webpack -- -w & nodemon server.js --ignore dist/ --ignore src/"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "pg": "^7.4.3",
     "react": "^16.4.1",

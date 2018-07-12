@@ -3,19 +3,19 @@ module.exports = {
   devtool: 'source-maps',
   entry: './src/index.js',
   output: {
-    path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    path: path.join(__dirname, 'dist')
   },
   module: {
     loaders: [
       {
-        test: /\$.js/,
+        test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
         query: {
-          presets: [ 'env', 'react']
+          presets: [ 'env', 'react' ]
         }
       }
     ]
   }
-}
+};
