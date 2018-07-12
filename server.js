@@ -5,7 +5,7 @@ const db = require('./db');
 const { Player, Match } = db.models
 
 app.use('/dist', express.static(path.join(__dirname, 'dist')))
-// app.use(require('body-parser').urlencoded({ extended: true }))
+app.use(require('body-parser').urlencoded({ extended: true }))
 app.use(require('body-parser').json())
 
 app.get('/', (req, res, next) => res.sendFile(path.join(__dirname, 'index.html')))
