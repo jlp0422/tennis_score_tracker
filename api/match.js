@@ -15,7 +15,6 @@ app.get('/:id', (req, res, next) => {
 })
 
 app.post('/', (req, res, next) => {
-  console.log(req.body)
   const { playerOneId, playerTwoId } = req.body
   Match.create({ playerOneId, playerTwoId })
     .then(match => res.send(match))

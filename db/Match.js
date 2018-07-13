@@ -3,12 +3,16 @@ const { Sequelize } = conn;
 const Player = require('./Player');
 
 const Match = conn.define('match', {
-  playerOneScore: Sequelize.STRING,
-  playerOneGames: Sequelize.INTEGER,
-  playerOneSets: Sequelize.INTEGER,
-  playerTwoScore: Sequelize.STRING,
-  playerTwoGames: Sequelize.INTEGER,
-  playerTwoSets: Sequelize.INTEGER,
+  playerOneSetOne: Sequelize.INTEGER,
+  playerOneSetTwo: Sequelize.INTEGER,
+  playerOneSetThree: Sequelize.INTEGER,
+  playerOneSetFour: Sequelize.INTEGER,
+  playerOneSetFive: Sequelize.INTEGER,
+  playerTwoSetOne: Sequelize.INTEGER,
+  playerTwoSetTwo: Sequelize.INTEGER,
+  playerTwoSetThree: Sequelize.INTEGER,
+  playerTwoSetFour: Sequelize.INTEGER,
+  playerTwoSetFive: Sequelize.INTEGER,
   matchWinner: Sequelize.INTEGER
 })
 
