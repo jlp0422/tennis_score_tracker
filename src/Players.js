@@ -3,54 +3,71 @@ import React from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { addPlayer } from './store/PlayerReducer';
+import { createNewMatch } from './store/MatchReducer';
 
 class Players extends React.Component {
   constructor() {
     super()
     this.state = {
-      firstName: '',
-      lastName: '',
+      playerOneId: '',
+      playerTwoId: ''
     }
   }
 
   onChange(ev) {
     const change = {}
-    change[ev.target.name] = ev.target.value
+    change[ev.target.name] = ev.target.value * 1
     this.setState(change)
   }
 
   onSubmit() {
-    const { firstName, lastName } = this.state
-    this.props.createPlayer({ firstName, lastName })
-    this.setState({ firstName: '', lastName: '' })
+    this.props.createMatch(this.state)
   }
 
   render() {
-    const { firstName, lastName } = this.state
-    const { players } = this.props
+    const { playerOneId, playerTwoId } = this.state
+    const { players, match } = this.props
     return (
       <div>
-        <h2>Enter Player { players.length < 1 ? 'One' : 'Two '}</h2>
-        <input value={ firstName } name="firstName" onChange={ this.onChange.bind(this) } placeholder="First name" />
-        <input value={ lastName } name="lastName" onChange={ this.onChange.bind(this) } placeholder="Last name" />
-        <button disabled={ players.length > 1 } onClick={ this.onSubmit.bind(this) }>Create</button>
+        <h2>Select Players</h2>
+
+        <label>Player One</label>
+        <select name="playerOneId" onChange={ this.onChange.bind(this) } value={ playerOneId }>
+            <option value={0}>Select player</option>
+          { players.map(player => (
+            <option value={ player.id } key={player.id}>{`${player.firstName} ${player.lastName}`}</option>
+          ))}
+        </select>
+          <br/>
+        <label>Player Two</label>
+        <select name="playerTwoId" onChange={ this.onChange.bind(this) } value={ playerTwoId }>
+            <option value={0}>Select player</option>
+          { players.map(player => (
+            <option value={ player.id } key={player.id}>{`${player.firstName} ${player.lastName}`}</option>
+          ))}
+        </select>
+          <br />
+        <button disabled={ playerOneId === playerTwoId || !playerOneId || !playerTwoId } onClick={ this.onSubmit.bind(this) }>Start Match</button>
         <h3>Players in this Match</h3>
+          <p>{ match.id ? (
+          `${players.find(player => player.id === match.playerOneId).firstInitialLastName} vs. ${players.find(player => player.id === match.playerTwoId).firstInitialLastName}`
+          ) : null
+        }</p>
         <h5>
-          { players[0] && players.length && players[0].id && `${players[0].firstName} ${players[0].lastName} vs. `}
-          { players[1] && players[1].id && `${players[1].firstName} ${players[1].lastName}` }
         </h5>
       </div>
     )
   }
 }
 
-const mapState = ({ players }) => {
-  return { players }
+const mapState = ({ players, match }) => {
+  return { players, match }
 }
 
 const mapDispatch = (dispatch) => {
   return {
-    createPlayer: (player) => dispatch(addPlayer(player))
+    // createPlayer: (player) => dispatch(addPlayer(player)),
+    createMatch: (players) => dispatch(createNewMatch(players))
   }
 }
 

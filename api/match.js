@@ -10,6 +10,21 @@ app.get('/all', (req, res, next) => {
 
 app.get('/:id', (req, res, next) => {
   Match.findById(req.params.id)
+    .then( match => res.send(match))
+    .catch(next)
+})
+
+app.post('/', (req, res, next) => {
+  console.log(req.body)
+  const { playerOneId, playerTwoId } = req.body
+  Match.create({ playerOneId, playerTwoId })
     .then(match => res.send(match))
     .catch(next)
 })
+
+// app.get('/:id/players', (req, res, next) => {
+//   Match.findById(req.params.id)
+//     .then( match => match.findPlayers(match))
+//     .then( matchPlayers => res.send(matchPlayers))
+//     .catch(next)
+// })
