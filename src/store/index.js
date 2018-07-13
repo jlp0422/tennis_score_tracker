@@ -5,7 +5,7 @@ import matchReducer from './MatchReducer';
 
 const reducer = combineReducers({
   players: playerReducer,
-  match: matchReducer
+  matches: matchReducer
 })
 
 const store = createStore(reducer, applyMiddleware(thunk))

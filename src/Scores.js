@@ -14,16 +14,22 @@ class Scores extends React.Component {
   }
 
   render() {
-    const { players, match } = this.props
-    console.log(players, match)
+    const { playerOne, playerTwo, match } = this.props
     return (
-      <hr />
+      <div>
+        <h1>Players in this match</h1>
+        <h3>{ playerOne.firstInitialLastName } vs. { playerTwo.firstInitialLastName }</h3>
+      </div>
     )
   }
 }
 
-const mapState = ({ players, match }) => {
-  return { players, match }
+const mapState = ({ players, matches }, { id }) => {
+  console.log(id)
+  const match = matches.length && matches.find(m => m.id === id)
+  const playerOne = matches.length && match && players.find(p => p.id === match.playerOneId)
+  const playerTwo = matches.length && match && players.find(p => p.id === match.playerTwoId)
+  return { match, playerOne, playerTwo }
 }
 
 export default connect(mapState, null)(Scores);

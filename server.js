@@ -12,12 +12,6 @@ app.use('/api', require('./api'))
 
 app.get('/', (req, res, next) => res.sendFile(path.join(__dirname, 'index.html')))
 
-app.post('/player', (req, res, next) => {
-  Player.create(req.body)
-    .then(player => res.send(player))
-    .catch(next)
-})
-
 db.sync()
   .then(() => db.seed())
 

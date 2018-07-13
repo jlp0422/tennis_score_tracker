@@ -19,12 +19,13 @@ class Players extends React.Component {
   }
 
   onSubmit() {
-    this.props.createMatch(this.state)
+    const { createMatch, history } = this.props
+    createMatch(this.state, history)
   }
 
   render() {
     const { playerOneId, playerTwoId } = this.state
-    const { players, match } = this.props
+    const { players } = this.props
     return (
       <div>
         <h2>Select Players</h2>
@@ -47,12 +48,6 @@ class Players extends React.Component {
         <br /><br />
 
         <button disabled={ playerOneId === playerTwoId || !playerOneId || !playerTwoId } onClick={ this.onSubmit.bind(this) }>Start Match</button>
-
-        <h3>Players in this Match</h3>
-          <p>{ match.id ? (
-          `${players.find(player => player.id === match.playerOneId).firstInitialLastName} vs. ${players.find(player => player.id === match.playerTwoId).firstInitialLastName}`
-          ) : null
-        }</p>
         <h5>
         </h5>
       </div>
@@ -60,14 +55,13 @@ class Players extends React.Component {
   }
 }
 
-const mapState = ({ players, match }) => {
-  return { players, match }
+const mapState = ({ players }, { history }) => {
+  return { players, history }
 }
 
 const mapDispatch = (dispatch) => {
   return {
-    // createPlayer: (player) => dispatch(addPlayer(player)),
-    createMatch: (players) => dispatch(createNewMatch(players))
+    createMatch: (players, history) => dispatch(createNewMatch(players, history))
   }
 }
 

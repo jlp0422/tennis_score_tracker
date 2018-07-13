@@ -20,3 +20,9 @@ app.get('/:id/matches', (req, res, next) => {
     .then( playerMatches => res.send(playerMatches))
     .catch(next)
 })
+
+app.post('/', (req, res, next) => {
+  Player.create(req.body)
+    .then(player => res.send(player))
+    .catch(next)
+})
