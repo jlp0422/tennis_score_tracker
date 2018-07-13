@@ -11,12 +11,16 @@ const sync = () => conn.sync({ force: true })
 const seed = () => {
   return Promise.all([
     Player.create({ firstName: 'Jeremy', lastName: 'Philipson' }),
-    Player.create({ firstName: 'Carolyn', lastName: 'Fine' }),
-    Player.create({ firstName: 'David', lastName: 'Ehrlich' })
+    Player.create({ firstName: 'Luke', lastName: 'Andrews' }),
+    Player.create({ firstName: 'David', lastName: 'Ehrlich' }),
+    Player.create({ firstName: 'Andrew', lastName: 'Greif' }),
+    Player.create({ firstName: 'Steve', lastName: 'Collins' }),
   ])
-  .then(([jeremy, carolyn, david]) => {
-    Match.create({ playerOneId: jeremy.id, playerTwoId: carolyn.id })
+  .then(([jeremy, luke, david, andrew, steve ]) => {
+    Match.create({ playerOneId: jeremy.id, playerTwoId: luke.id })
     Match.create({ playerOneId: david.id, playerTwoId: jeremy.id })
+    Match.create({ playerOneId: andrew.id, playerTwoId: david.id })
+    Match.create({ playerOneId: steve.id, playerTwoId: jeremy.id })
   })
 }
 

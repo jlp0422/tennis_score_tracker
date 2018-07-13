@@ -8,6 +8,8 @@ app.use('/dist', express.static(path.join(__dirname, 'dist')))
 app.use(require('body-parser').urlencoded({ extended: true }))
 app.use(require('body-parser').json())
 
+app.use('/api', require('./api'))
+
 app.get('/', (req, res, next) => res.sendFile(path.join(__dirname, 'index.html')))
 
 app.post('/player', (req, res, next) => {
