@@ -21,6 +21,17 @@ app.post('/', (req, res, next) => {
     .catch(next)
 })
 
+app.post('/:id', (req, res, next) => {
+  const { playerOneScore, playerTwoScore, setNumber } = req.body
+  Match.findById(req.params.id)
+    .then( match => {
+      Object.assign({}, match, { playerOneSet})
+      console.log(match.get())
+      console.log('player one: ', playerOneScore)
+      console.log('player two: ', playerTwoScore)
+    })
+})
+
 // app.get('/:id/players', (req, res, next) => {
 //   Match.findById(req.params.id)
 //     .then( match => match.findPlayers(match))

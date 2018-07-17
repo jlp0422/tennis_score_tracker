@@ -25,6 +25,15 @@ export const loadMatches = () => {
   }
 }
 
+export const setFinal = (id, playerOneScore, playerTwoScore, setNumber) => {
+  return (dispatch) => {
+    console.log('set posted')
+    return axios.post(`/api/match/${id}`, { playerOneScore, playerTwoScore, setNumber })
+      .then( res => res.data)
+      .then( match => console.log(match))
+  }
+}
+
 const matchReducer = (state = [], action) => {
   switch(action.type) {
     case LOAD_MATCHES:

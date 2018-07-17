@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React from 'react';
 import { connect } from 'react-redux';
+import { setFinal } from './store/MatchReducer';
 
 class Scores extends React.Component {
   constructor() {
@@ -8,8 +9,9 @@ class Scores extends React.Component {
     this.state = {
       playerOneGameScore: 0,
       playerOneSetScore: 0,
-      playerTwoGameScore: 40,
-      playerTwoSetScore: 0
+      playerTwoGameScore: 0,
+      playerTwoSetScore: 0,
+      activeSet: 1
     }
     this.addPoint = this.addPoint.bind(this)
   }
@@ -17,19 +19,26 @@ class Scores extends React.Component {
   addPoint(player) {
     let newGameScore
     let newSetScore
-    const { playerOneGameScore, playerOneSetScore, playerTwoGameScore, playerTwoSetScore } = this.state
+    const { submitSet, match } = this.props
+    const { playerOneGameScore, playerOneSetScore, playerTwoGameScore, playerTwoSetScore, activeSet } = this.state
+    submitSet(match.id, playerOneSetScore, playerTwoSetScore, activeSet)
     if (player === 'playerOne') {
       if (playerOneGameScore >= 30) {
         if (playerTwoGameScore <= 30) {
           // if player two has less than 30
           if (playerOneGameScore === 30) this.setState({ playerOneGameScore: 40 })
-          else this.setState({ playerOneGameScore: 0, playerTwoGameScore: 0, playerOneSetScore: playerOneSetScore + 1})
+          else {
+            this.setState({ playerOneGameScore: 0, playerTwoGameScore: 0, playerOneSetScore: playerOneSetScore + 1})
+          }
         } else {
           // if player two has 40
           if (playerTwoGameScore === 45) this.setState({ playerTwoGameScore: 40 })
           else if (playerOneGameScore === 30) this.setState({ playerOneGameScore: 40 })
           else if (playerOneGameScore === 40) this.setState({ playerOneGameScore: 45 })
-          else this.setState({ playerOneGameScore: 0, playerTwoGameScore: 0, playerOneSetScore: playerOneSetScore + 1 })
+          else {
+            this.setState({ playerOneGameScore: 0, playerTwoGameScore: 0, playerOneSetScore: playerOneSetScore + 1 })
+
+          }
         }
       }
       else this.setState({ playerOneGameScore: playerOneGameScore + 15 })
@@ -56,7 +65,8 @@ class Scores extends React.Component {
     const { addPoint } = this
     const { playerOne, playerTwo, match } = this.props
     const { playerOneGameScore, playerOneSetScore, playerTwoGameScore, playerTwoSetScore } = this.state
-    if (!playerOne.id || !playerTwo.id) return null
+    if (!playerOne || !playerTwo) return null
+    console.log(match)
     return (
       <div>
         <h1>Players in this match</h1>
@@ -73,12 +83,36 @@ class Scores extends React.Component {
           {/* PLAYER ONE */}
           <p style={{ gridColumnStart: 1, gridRowStart: 2, fontWeight: 'bold' }}>{playerOne.firstInitialLastName}</p>
           <p style={{ gridColumnStart: 2, gridRowStart: 2, fontWeight: 'bold' }}>{ playerOneGameScore }</p>
-          <p style={{ gridColumnStart: 3, gridRowStart: 2 }}>{ playerOneSetScore }</p>
+          <p style={{ gridColumnStart: 3, gridRowStart: 2 }}>{ match.playerOneSetOne || playerOneSetScore }</p>
+          { match.playerOneSetOne &&
+            <p style={{ gridColumnStart: 4, gridRowStart: 2 }}>{match.playerOneSetTwo || playerOneSetScore}</p>
+          }
+          { match.playerOneSetTwo &&
+            <p style={{ gridColumnStart: 5, gridRowStart: 2 }}>{match.playerOneSetThree || playerOneSetScore}</p>
+          }
+          { match.playerOneSetThree &&
+            <p style={{ gridColumnStart: 6, gridRowStart: 2 }}>{match.playerOneSetFour || playerOneSetScore}</p>
+          }
+          { match.playerOneSetFour &&
+            <p style={{ gridColumnStart: 7, gridRowStart: 2 }}>{match.playerOneSetFive || playerOneSetScore}</p>
+          }
 
           {/* PLAYER TWO */}
           <p style={{ gridColumnStart: 1, gridRowStart: 3, fontWeight: 'bold' }}>{playerTwo.firstInitialLastName}</p>
           <p style={{ gridColumnStart: 2, gridRowStart: 3, fontWeight: 'bold' }}>{playerTwoGameScore}</p>
-          <p style={{ gridColumnStart: 3, gridRowStart: 3 }}>{playerTwoSetScore}</p>
+          <p style={{ gridColumnStart: 3, gridRowStart: 3 }}>{ match.playerTwoSetOne || playerTwoSetScore }</p>
+          { match.playerTwoSetOne &&
+            <p style={{ gridColumnStart: 4, gridRowStart: 2 }}>{match.playerTwoSetTwo || playerTwoSetScore}</p>
+          }
+          { match.playerTwoSetTwo &&
+            <p style={{ gridColumnStart: 5, gridRowStart: 2 }}>{match.playerTwoSetThree || playerTwoSetScore}</p>
+          }
+          { match.playerTwoSetThree &&
+            <p style={{ gridColumnStart: 6, gridRowStart: 2 }}>{match.playerTwoSetFour || playerTwoSetScore}</p>
+          }
+          { match.playerTwoSetFour &&
+            <p style={{ gridColumnStart: 7, gridRowStart: 2 }}>{match.playerTwoSetFive || playerTwoSetScore}</p>
+          }
         </div>
       </div>
     )
@@ -92,4 +126,10 @@ const mapState = ({ players, matches }, { id }) => {
   return { match, playerOne, playerTwo }
 }
 
-export default connect(mapState, null)(Scores);
+const mapDispatch = ( dispatch ) => {
+  return {
+    submitSet: (id, p1, p2, set) => dispatch(setFinal(id, p1, p2, set))
+  }
+}
+
+export default connect(mapState, mapDispatch)(Scores);
