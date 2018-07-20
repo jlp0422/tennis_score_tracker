@@ -26,13 +26,13 @@ export const loadMatches = () => {
   }
 }
 
-export const setFinal = (id, playerOneScore, playerTwoScore, setNumber) => {
+export const updateMatch = (id, playerOneGameScore, playerTwoGameScore, playerOneSetScore, playerTwoSetScore, setNumber) => {
   return (dispatch) => {
     console.log('set posted')
-    return axios.put(`/api/match/${id}`, { playerOneScore, playerTwoScore, setNumber })
+    return axios.put(`/api/match/${id}`, { playerOneGameScore, playerTwoGameScore,playerOneSetScore, playerTwoSetScore, setNumber })
       .then( res => res.data)
       .then( match => dispatch({ type: UPDATE_MATCH, match }))
-      .catch(err => console.error(err))
+      .catch( err => console.error(err))
   }
 }
 

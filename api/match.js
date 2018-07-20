@@ -22,17 +22,26 @@ app.post('/create', (req, res, next) => {
 })
 
 app.put('/:id', (req, res, next) => {
-  console.log('submit set')
-  const { playerOneScore, playerTwoScore, setNumber } = req.body
-  console.log('this is the set: ', setNumber)
+  const { playerOneGameScore, playerTwoGameScore, playerOneSetScore, playerTwoSetScore, setNumber } = req.body
+  console.log(req.body)
   Match.findById(req.params.id)
     .then( match => {
       switch(setNumber) {
-        case 'One':
-          Object.assign(match, { playerOneSetOne: playerOneScore, playerTwoSetOne: playerTwoScore })
+        case 1:
+          Object.assign(match, { playerOneSetOne: playerOneSetScore, playerTwoSetOne: playerTwoSetScore })
           return match.save()
-        case 'Two':
-          console.log('hellooo set 2')
+        case 2:
+          Object.assign(match, { playerOneSetTwo: playerOneSetScore, playerTwoSetTwo: playerTwoSetScore })
+          return match.save()
+        case 3:
+          Object.assign(match, { playerOneSetThree: playerOneSetScore, playerTwoSetThree: playerTwoSetScore })
+          return match.save()
+        case 4:
+          Object.assign(match, { playerOneSetFour: playerOneSetScore, playerTwoSetFour: playerTwoSetScore })
+          return match.save()
+        case 5:
+          Object.assign(match, { playerOneSetFive: playerOneSetScore, playerTwoSetFive: playerTwoSetScore })
+          return match.save()
         default:
           console.log('set number: ', setNumber)
       }

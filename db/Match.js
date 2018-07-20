@@ -13,6 +13,8 @@ const Match = conn.define('match', {
   playerTwoSetThree: Sequelize.INTEGER,
   playerTwoSetFour: Sequelize.INTEGER,
   playerTwoSetFive: Sequelize.INTEGER,
+  playerOneCurrentGameScore: Sequelize.INTEGER,
+  playerTwoCurrentGameScore: Sequelize.INTEGER,
   matchWinner: Sequelize.INTEGER
 })
 
