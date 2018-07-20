@@ -22,7 +22,7 @@ class App extends React.Component {
           <Route path='/' component={ Nav } />
           <Switch>
             <Route exact path='/' component={ Start } />
-            <Route exact path='/match' component={ Players } />
+            <Route exact path='/match/create' component={ Players } />
             <Route exact path='/match/:id' render={({ match }) => (
               <Scores id={ match.params.id * 1 } />
             )} />

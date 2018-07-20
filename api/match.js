@@ -14,22 +14,31 @@ app.get('/:id', (req, res, next) => {
     .catch(next)
 })
 
-app.post('/', (req, res, next) => {
+app.post('/create', (req, res, next) => {
   const { playerOneId, playerTwoId } = req.body
   Match.create({ playerOneId, playerTwoId })
     .then(match => res.send(match))
     .catch(next)
 })
 
-app.post('/:id', (req, res, next) => {
+app.put('/:id', (req, res, next) => {
+  console.log('submit set')
   const { playerOneScore, playerTwoScore, setNumber } = req.body
+  console.log('this is the set: ', setNumber)
   Match.findById(req.params.id)
     .then( match => {
-      Object.assign({}, match, { playerOneSet})
-      console.log(match.get())
-      console.log('player one: ', playerOneScore)
-      console.log('player two: ', playerTwoScore)
+      switch(setNumber) {
+        case 'One':
+          Object.assign(match, { playerOneSetOne: playerOneScore, playerTwoSetOne: playerTwoScore })
+          return match.save()
+        case 'Two':
+          console.log('hellooo set 2')
+        default:
+          console.log('set number: ', setNumber)
+      }
     })
+    .then(match => res.send(match))
+    .catch(next)
 })
 
 // app.get('/:id/players', (req, res, next) => {

@@ -5,7 +5,7 @@ const Start = () => {
   return (
     <div>
       <h2>Start a new match</h2>
-      <Link to='/match'><button>Start</button></Link>
+      <Link to='/match/create'><button>Start</button></Link>
     </div>
   )
 }
