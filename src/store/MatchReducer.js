@@ -28,7 +28,7 @@ export const loadMatches = () => {
 
 export const updateMatch = (id, playerOneGameScore, playerTwoGameScore, playerOneSetScore, playerTwoSetScore, setNumber) => {
   return (dispatch) => {
-    console.log('set posted')
+    console.log('match updated')
     return axios.put(`/api/match/${id}`, { playerOneGameScore, playerTwoGameScore,playerOneSetScore, playerTwoSetScore, setNumber })
       .then( res => res.data)
       .then( match => dispatch({ type: UPDATE_MATCH, match }))

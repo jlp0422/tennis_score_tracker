@@ -13,9 +13,17 @@ const Match = conn.define('match', {
   playerTwoSetThree: Sequelize.INTEGER,
   playerTwoSetFour: Sequelize.INTEGER,
   playerTwoSetFive: Sequelize.INTEGER,
-  playerOneCurrentGameScore: Sequelize.INTEGER,
-  playerTwoCurrentGameScore: Sequelize.INTEGER,
+  playerOneCurrentGameScore: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  playerTwoCurrentGameScore: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
   matchWinner: Sequelize.INTEGER
+}, {
+  timestamps: false
 })
 
 // Match.prototype.findPlayers = function(match) {

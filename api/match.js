@@ -24,23 +24,24 @@ app.post('/create', (req, res, next) => {
 app.put('/:id', (req, res, next) => {
   const { playerOneGameScore, playerTwoGameScore, playerOneSetScore, playerTwoSetScore, setNumber } = req.body
   console.log(req.body)
+  const currentGameScores = { playerOneCurrentGameScore: playerOneGameScore, playerTwoCurrentGameScore: playerTwoGameScore }
   Match.findById(req.params.id)
     .then( match => {
       switch(setNumber) {
         case 1:
-          Object.assign(match, { playerOneSetOne: playerOneSetScore, playerTwoSetOne: playerTwoSetScore })
+          Object.assign(match, currentGameScores, { playerOneSetOne: playerOneSetScore, playerTwoSetOne: playerTwoSetScore })
           return match.save()
         case 2:
-          Object.assign(match, { playerOneSetTwo: playerOneSetScore, playerTwoSetTwo: playerTwoSetScore })
+          Object.assign(match, currentGameScores, { playerOneSetTwo: playerOneSetScore, playerTwoSetTwo: playerTwoSetScore })
           return match.save()
         case 3:
-          Object.assign(match, { playerOneSetThree: playerOneSetScore, playerTwoSetThree: playerTwoSetScore })
+          Object.assign(match, currentGameScores, { playerOneSetThree: playerOneSetScore, playerTwoSetThree: playerTwoSetScore })
           return match.save()
         case 4:
-          Object.assign(match, { playerOneSetFour: playerOneSetScore, playerTwoSetFour: playerTwoSetScore })
+          Object.assign(match, currentGameScores, { playerOneSetFour: playerOneSetScore, playerTwoSetFour: playerTwoSetScore })
           return match.save()
         case 5:
-          Object.assign(match, { playerOneSetFive: playerOneSetScore, playerTwoSetFive: playerTwoSetScore })
+          Object.assign(match, currentGameScores, { playerOneSetFive: playerOneSetScore, playerTwoSetFive: playerTwoSetScore })
           return match.save()
         default:
           console.log('set number: ', setNumber)

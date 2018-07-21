@@ -17,12 +17,21 @@ class Scores extends React.Component {
     this.saveMatch = this.saveMatch.bind(this)
   }
 
-  componentDidUpdate() {
-    this.checkSet()
+  componentDidUpdate(prevProps, prevState) {
+    console.log('prev props: ', prevProps.match)
+    console.log('this props: ', this.props.match)
+    // console.log('prevState: ', prevState)
+    // console.log('this state: ', this.state)
+    if (prevProps.match !== this.props.match) console.log("props don't match")
+    if (prevProps.match === this.props.match) console.log('props match!!!')
+    // if (prevState !== this.state) console.log("state doesn't match")
+    // if (prevProps === this.props && prevState === this.state) console.log('all matching')
+      // this.saveMatch()
+      this.checkSet()
   }
 
   saveMatch() {
-    const { match, saveMatch } = this.props
+    const { match, saveMatchOnDB } = this.props
     const {
       playerOneGameScore,
       playerOneSetScore,
@@ -30,7 +39,9 @@ class Scores extends React.Component {
       playerTwoSetScore,
       activeSet
     } = this.state
-    saveMatch(match.id, playerOneGameScore, playerOneSetScore, playerTwoGameScore, playerTwoSetScore, activeSet)
+    console.log('match being saved')
+    saveMatchOnDB(match.id, playerOneGameScore, playerTwoGameScore, playerOneSetScore, playerTwoSetScore, activeSet)
+    // this.checkSet()
   }
 
   pointOver(player) {
@@ -86,9 +97,10 @@ class Scores extends React.Component {
   }
 
   setFinal() {
-    const { saveMatch, match } = this.props
+    const { saveMatchOnDB, match } = this.props
     const { activeSet, playerOneSetScore, playerTwoSetScore } = this.state
-    saveMatch(match.id, 0, 0, playerOneSetScore, playerTwoSetScore, activeSet)
+    console.log('set is final')
+    saveMatchOnDB(match.id, 0, 0, playerOneSetScore, playerTwoSetScore, activeSet)
     this.setState({
       playerOneGameScore: 0,
       playerOneSetScore: 0,
@@ -99,13 +111,17 @@ class Scores extends React.Component {
   }
 
   render() {
-    const gridCSS = { display: 'grid', gridTemplateColumns: '150px 100px 100px 100px 100px 100px', gridTemplateRows: '50px 50px 50px', border: '1px solid black', marginTop: '20px' }
+    const gridCSS = { display: 'grid', gridTemplateColumns: '150px 100px 100px 100px 100px 100px 100px', gridTemplateRows: '50px 50px 50px', border: '1px solid black', marginTop: '20px' }
     const center = { textAlign: 'center' }
     const { pointOver, saveMatch } = this
     const { playerOne, playerTwo, match } = this.props
-    const { playerOneGameScore, playerOneSetScore, playerTwoGameScore, playerTwoSetScore } = this.state
+    const { playerOneCurrentGameScore, playerTwoCurrentGameScore } = match
+    const { playerOneGameScore, playerOneSetScore, playerTwoGameScore, playerTwoSetScore, activeSet } = this.state
+    const p1GameScore = playerOneCurrentGameScore || playerOneGameScore
+    const p2GameScore = playerTwoCurrentGameScore || playerTwoGameScore
     if (!playerOne || !playerTwo) return null
-    console.log(this.state)
+    // console.log('THIS IS THE MATCH: ', match)
+    // console.log('THIS IS THE STATE: ', this.state)
     return (
       <div>
         <h1>Players in this match</h1>
@@ -116,50 +132,80 @@ class Scores extends React.Component {
           <button onClick={() => pointOver('playerTwo')}>{ playerTwo.lastName }</button>
         </h4>
         <button onClick={ saveMatch }>Save Match</button>
+
         <div style={ gridCSS }>
-        <p style={{ gridRowStart: 1 }}>Player Name</p>
-        <p style={{ gridColumnStart: 2, textAlign: 'center' }}>Current Game</p>
-        <p style={{ gridColumnStart: 3, textAlign: 'center' }}>Set 1</p>
-        { match.playerOneSetOne || match.playerTwoSetOne ? <p style={{ gridColumnStart: 4, textAlign: 'center' }}>Set 2</p> : null }
-        { match.playerOneSetTwo || match.playerTwoSetTwo ? <p style={{ gridColumnStart: 5, textAlign: 'center' }}>Set 3</p> : null }
-        { match.playerOneSetThree || match.playerTwoSetThree ? <p style={{ gridColumnStart: 6, textAlign: 'center' }}>Set 4</p> : null }
-        { match.playerOneSetFour || match.playerTwoSetFour ? <p style={{ gridColumnStart: 7, textAlign: 'center' }}>Set 5</p> : null }
+          <p style={{ gridRowStart: 1 }}>Player Name</p>
+          <p style={{ gridColumnStart: 2, textAlign: 'center' }}>Current Game</p>
+          <p style={{ gridColumnStart: 3, textAlign: 'center' }}>Set 1</p>
+          { activeSet >= 2 || match.playerOneSetOne || match.playerTwoSetOne ?
+            <p style={{ gridColumnStart: 4, textAlign: 'center' }}>Set 2</p> : null
+          }
+          { activeSet >= 3 || match.playerOneSetTwo || match.playerTwoSetTwo ?
+            <p style={{ gridColumnStart: 5, textAlign: 'center' }}>Set 3</p> : null
+          }
+          { activeSet >= 4 || match.playerOneSetThree || match.playerTwoSetThree ?
+            <p style={{ gridColumnStart: 6, textAlign: 'center' }}>Set 4</p> : null
+          }
+          { activeSet >= 5 || match.playerOneSetFour || match.playerTwoSetFour ?
+            <p style={{ gridColumnStart: 7, textAlign: 'center' }}>Set 5</p> : null
+          }
+
           {/* PLAYER ONE */}
           <p style={{ gridColumnStart: 1, gridRowStart: 2, fontWeight: 'bold' }}>{playerOne.firstInitialLastName}</p>
           <p style={{ gridColumnStart: 2, gridRowStart: 2, fontWeight: 'bold', textAlign: 'center' }}>
-            { playerOneGameScore === 45 ? 'AD' : playerOneGameScore }
+            { p1GameScore === 45 ? 'AD' : p1GameScore }
           </p>
-          <p style={{ gridColumnStart: 3, gridRowStart: 2, textAlign: 'center' }}>{ match.playerOneSetOne || playerOneSetScore }</p>
-          { match.playerOneSetOne !== null &&
-            <p style={{ gridColumnStart: 4, gridRowStart: 2, textAlign: 'center' }}>{match.playerOneSetTwo || playerOneSetScore}</p>
+          <p style={{ gridColumnStart: 3, gridRowStart: 2, textAlign: 'center' }}>
+            { match.playerOneSetOne !== null ? match.playerOneSetOne : playerOneSetScore }
+          </p>
+          { activeSet >= 2 || match.playerOneSetOne || match.playerTwoSetOne ?
+            <p style={{ gridColumnStart: 4, gridRowStart: 2, textAlign: 'center' }}>
+              {match.playerOneSetTwo !== null ? match.playerOneSetTwo : playerOneSetScore }
+            </p> : null
           }
-          { match.playerOneSetTwo !== null &&
-            <p style={{ gridColumnStart: 5, gridRowStart: 2, textAlign: 'center' }}>{match.playerOneSetThree || playerOneSetScore}</p>
+          {activeSet >= 3 || match.playerOneSetTwo || match.playerTwoSetTwo ?
+            <p style={{ gridColumnStart: 5, gridRowStart: 2, textAlign: 'center' }}>
+              {match.playerOneSetThree !== null ? match.playerOneSetThree : playerOneSetScore }
+            </p> : null
           }
-          { match.playerOneSetThree !== null &&
-            <p style={{ gridColumnStart: 6, gridRowStart: 2, textAlign: 'center' }}>{match.playerOneSetFour || playerOneSetScore}</p>
+          { activeSet >= 4 || match.playerOneSetThree || match.playerTwoSetThree ?
+            <p style={{ gridColumnStart: 6, gridRowStart: 2, textAlign: 'center' }}>
+              {match.playerOneSetFour !== null ? match.playerOneSetFour : playerOneSetScore }
+            </p> : null
           }
-          { match.playerOneSetFour !== null &&
-            <p style={{ gridColumnStart: 7, gridRowStart: 2, textAlign: 'center' }}>{match.playerOneSetFive || playerOneSetScore}</p>
+          { activeSet >= 5 || match.playerOneSetFour || match.playerTwoSetFour ?
+            <p style={{ gridColumnStart: 7, gridRowStart: 2, textAlign: 'center' }}>
+              {match.playerOneSetFive !== null ? match.playerOneSetFive : playerOneSetScore }
+            </p> : null
           }
 
           {/* PLAYER TWO */}
           <p style={{ gridColumnStart: 1, gridRowStart: 3, fontWeight: 'bold' }}>{playerTwo.firstInitialLastName}</p>
           <p style={{ gridColumnStart: 2, gridRowStart: 3, fontWeight: 'bold', textAlign: 'center' }}>
-            {playerTwoGameScore === 45 ? 'AD' : playerTwoGameScore }
+            {p2GameScore === 45 ? 'AD' : p2GameScore }
           </p>
-          <p style={{ gridColumnStart: 3, gridRowStart: 3, textAlign: 'center' }}>{ match.playerTwoSetOne || playerTwoSetScore }</p>
-          { match.playerTwoSetOne !== null &&
-            <p style={{ gridColumnStart: 4, gridRowStart: 3, textAlign: 'center' }}>{match.playerTwoSetTwo || playerTwoSetScore}</p>
+          <p style={{ gridColumnStart: 3, gridRowStart: 3, textAlign: 'center' }}>
+            { match.playerTwoSetOne !== null ? match.playerTwoSetOne : playerTwoSetScore }
+          </p>
+          { activeSet >= 2 || match.playerOneSetOne || match.playerTwoSetOne ?
+            <p style={{ gridColumnStart: 4, gridRowStart: 3, textAlign: 'center' }}>
+              {match.playerTwoSetTwo !== null ? match.playerTwoSetTwo : playerTwoSetScore}
+            </p> : null
           }
-          { match.playerTwoSetTwo !== null &&
-            <p style={{ gridColumnStart: 5, gridRowStart: 3, textAlign: 'center' }}>{match.playerTwoSetThree || playerTwoSetScore}</p>
+          { activeSet >= 3 || match.playerOneSetTwo || match.playerTwoSetTwo ?
+            <p style={{ gridColumnStart: 5, gridRowStart: 3, textAlign: 'center' }}>
+              {match.playerTwoSetThree !== null ? match.playerTwoSetThree : playerTwoSetScore }
+            </p> : null
           }
-          { match.playerTwoSetThree !== null &&
-            <p style={{ gridColumnStart: 6, gridRowStart: 3, textAlign: 'center' }}>{match.playerTwoSetFour || playerTwoSetScore}</p>
+          { activeSet >= 4 || match.playerOneSetThree || match.playerTwoSetThree ?
+            <p style={{ gridColumnStart: 6, gridRowStart: 3, textAlign: 'center' }}>
+              {match.playerTwoSetFour !== null ? match.playerTwoSetFour : playerTwoSetScore }
+            </p> : null
           }
-          { match.playerTwoSetFour !== null &&
-            <p style={{ gridColumnStart: 7, gridRowStart: 3, textAlign: 'center' }}>{match.playerTwoSetFive || playerTwoSetScore}</p>
+          { activeSet >= 5 || match.playerOneSetFour || match.playerTwoSetFour ?
+            <p style={{ gridColumnStart: 7, gridRowStart: 3, textAlign: 'center' }}>
+              {match.playerTwoSetFive !== null ? match.playerTwoSetFive : playerTwoSetScore }
+            </p> : null
           }
         </div>
       </div>
@@ -176,7 +222,7 @@ const mapState = ({ players, matches }, { id }) => {
 
 const mapDispatch = ( dispatch ) => {
   return {
-    saveMatch: (id, p1game, p2game, p1set, p2set, setNumber) => dispatch(updateMatch(id, p1game, p2game, p1set, p2set, setNumber)),
+    saveMatchOnDB: (id, p1game, p2game, p1set, p2set, setNumber) => dispatch(updateMatch(id, p1game, p2game, p1set, p2set, setNumber)),
   }
 }
 
