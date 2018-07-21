@@ -23,7 +23,7 @@ app.post('/create', (req, res, next) => {
 
 app.put('/:id', (req, res, next) => {
   const { playerOneGameScore, playerTwoGameScore, playerOneSetScore, playerTwoSetScore, setNumber } = req.body
-  console.log(req.body)
+  console.log('req body: ', req.body)
   const currentGameScores = { playerOneCurrentGameScore: playerOneGameScore, playerTwoCurrentGameScore: playerTwoGameScore }
   Match.findById(req.params.id)
     .then( match => {

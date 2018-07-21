@@ -17,17 +17,25 @@ class Scores extends React.Component {
     this.saveMatch = this.saveMatch.bind(this)
   }
 
+  componentDidMount() {
+    const { match } = this.props
+    const { playerOneCurrentGameScore, playerTwoCurrentGameScore } = match
+    playerOneCurrentGameScore && playerTwoCurrentGameScore && this.setState({ playerOneGameScore: playerOneCurrentGameScore, playerTwoGameScore: playerTwoCurrentGameScore })
+  }
+
   componentDidUpdate(prevProps, prevState) {
-    console.log('prev props: ', prevProps.match)
-    console.log('this props: ', this.props.match)
     // console.log('prevState: ', prevState)
     // console.log('this state: ', this.state)
-    if (prevProps.match !== this.props.match) console.log("props don't match")
-    if (prevProps.match === this.props.match) console.log('props match!!!')
-    // if (prevState !== this.state) console.log("state doesn't match")
-    // if (prevProps === this.props && prevState === this.state) console.log('all matching')
-      // this.saveMatch()
-      this.checkSet()
+    if (prevState !== this.state) {
+      console.log("state don't match")
+      this.saveMatch()
+    }
+    if (prevState === this.state) {
+      console.log('state match!!!')
+    }
+    console.log('\n')
+    // if (prevState !== this.state || prevProps !== this.props) {
+    // }
   }
 
   saveMatch() {
@@ -44,10 +52,36 @@ class Scores extends React.Component {
     // this.checkSet()
   }
 
+  checkSet() {
+    const { playerOneSetScore, playerTwoSetScore, activeSet } = this.state
+    console.log('check set state: ', this.state)
+    if (playerOneSetScore < 6 && playerTwoSetScore < 6) return;
+    else if (playerOneSetScore >= 6) {
+      if (playerTwoSetScore < 5) this.setFinal()
+    }
+    else if (playerTwoSetScore >= 6) {
+      if (playerOneSetScore < 5) this.setFinal()
+    }
+  }
+
+  setFinal() {
+    const { saveMatchOnDB, match } = this.props
+    const { activeSet, playerOneSetScore, playerTwoSetScore } = this.state
+    console.log('set is final')
+    saveMatchOnDB(match.id, 0, 0, playerOneSetScore, playerTwoSetScore, activeSet)
+    this.setState({
+      playerOneGameScore: 0,
+      playerOneSetScore: 0,
+      playerTwoGameScore: 0,
+      playerTwoSetScore: 0,
+      activeSet: activeSet + 1
+    })
+  }
+
   pointOver(player) {
     // let newGameScore
     // let newSetScore
-    // const { submitSet, match } = this.props
+    // const { match } = this.props
     const { playerOneGameScore, playerOneSetScore, playerTwoGameScore, playerTwoSetScore } = this.state
     if (player === 'playerOne') {
       if (playerOneGameScore >= 30) {
@@ -85,30 +119,6 @@ class Scores extends React.Component {
     }
   }
 
-  checkSet() {
-    const { playerOneSetScore, playerTwoSetScore, activeSet } = this.state
-    if (playerOneSetScore < 6 && playerTwoSetScore < 6) return;
-    else if (playerOneSetScore >= 6) {
-      if (playerTwoSetScore < 5) this.setFinal()
-    }
-    else if (playerTwoSetScore >= 6) {
-      if (playerOneSetScore < 5) this.setFinal()
-    }
-  }
-
-  setFinal() {
-    const { saveMatchOnDB, match } = this.props
-    const { activeSet, playerOneSetScore, playerTwoSetScore } = this.state
-    console.log('set is final')
-    saveMatchOnDB(match.id, 0, 0, playerOneSetScore, playerTwoSetScore, activeSet)
-    this.setState({
-      playerOneGameScore: 0,
-      playerOneSetScore: 0,
-      playerTwoGameScore: 0,
-      playerTwoSetScore: 0,
-      activeSet: activeSet + 1
-    })
-  }
 
   render() {
     const gridCSS = { display: 'grid', gridTemplateColumns: '150px 100px 100px 100px 100px 100px 100px', gridTemplateRows: '50px 50px 50px', border: '1px solid black', marginTop: '20px' }
@@ -119,6 +129,11 @@ class Scores extends React.Component {
     const { playerOneGameScore, playerOneSetScore, playerTwoGameScore, playerTwoSetScore, activeSet } = this.state
     const p1GameScore = playerOneCurrentGameScore || playerOneGameScore
     const p2GameScore = playerTwoCurrentGameScore || playerTwoGameScore
+    const displaySetTwo = activeSet >= 2 || match.playerOneSetOne >= 6 || match.playerTwoSetOne >= 6
+    const displaySetThree = activeSet >= 3 || match.playerOneSetTwo >= 6 || match.playerTwoSetTwo >= 6
+    const displaySetFour = activeSet >= 4 || match.playerOneSetThree >= 6 || match.playerTwoSetThree >= 6
+    const displaySetFive = activeSet >= 5 || match.playerOneSetFour >= 6 || match.playerTwoSetFour >= 6
+
     if (!playerOne || !playerTwo) return null
     // console.log('THIS IS THE MATCH: ', match)
     // console.log('THIS IS THE STATE: ', this.state)
@@ -137,16 +152,16 @@ class Scores extends React.Component {
           <p style={{ gridRowStart: 1 }}>Player Name</p>
           <p style={{ gridColumnStart: 2, textAlign: 'center' }}>Current Game</p>
           <p style={{ gridColumnStart: 3, textAlign: 'center' }}>Set 1</p>
-          { activeSet >= 2 || match.playerOneSetOne || match.playerTwoSetOne ?
+          { displaySetTwo ?
             <p style={{ gridColumnStart: 4, textAlign: 'center' }}>Set 2</p> : null
           }
-          { activeSet >= 3 || match.playerOneSetTwo || match.playerTwoSetTwo ?
+          { displaySetThree ?
             <p style={{ gridColumnStart: 5, textAlign: 'center' }}>Set 3</p> : null
           }
-          { activeSet >= 4 || match.playerOneSetThree || match.playerTwoSetThree ?
+          { displaySetFour ?
             <p style={{ gridColumnStart: 6, textAlign: 'center' }}>Set 4</p> : null
           }
-          { activeSet >= 5 || match.playerOneSetFour || match.playerTwoSetFour ?
+          { displaySetFive ?
             <p style={{ gridColumnStart: 7, textAlign: 'center' }}>Set 5</p> : null
           }
 
@@ -158,22 +173,22 @@ class Scores extends React.Component {
           <p style={{ gridColumnStart: 3, gridRowStart: 2, textAlign: 'center' }}>
             { match.playerOneSetOne !== null ? match.playerOneSetOne : playerOneSetScore }
           </p>
-          { activeSet >= 2 || match.playerOneSetOne || match.playerTwoSetOne ?
+          { displaySetTwo ?
             <p style={{ gridColumnStart: 4, gridRowStart: 2, textAlign: 'center' }}>
               {match.playerOneSetTwo !== null ? match.playerOneSetTwo : playerOneSetScore }
             </p> : null
           }
-          {activeSet >= 3 || match.playerOneSetTwo || match.playerTwoSetTwo ?
+          {displaySetThree ?
             <p style={{ gridColumnStart: 5, gridRowStart: 2, textAlign: 'center' }}>
               {match.playerOneSetThree !== null ? match.playerOneSetThree : playerOneSetScore }
             </p> : null
           }
-          { activeSet >= 4 || match.playerOneSetThree || match.playerTwoSetThree ?
+          { displaySetFour ?
             <p style={{ gridColumnStart: 6, gridRowStart: 2, textAlign: 'center' }}>
               {match.playerOneSetFour !== null ? match.playerOneSetFour : playerOneSetScore }
             </p> : null
           }
-          { activeSet >= 5 || match.playerOneSetFour || match.playerTwoSetFour ?
+          { displaySetFive ?
             <p style={{ gridColumnStart: 7, gridRowStart: 2, textAlign: 'center' }}>
               {match.playerOneSetFive !== null ? match.playerOneSetFive : playerOneSetScore }
             </p> : null
@@ -187,22 +202,22 @@ class Scores extends React.Component {
           <p style={{ gridColumnStart: 3, gridRowStart: 3, textAlign: 'center' }}>
             { match.playerTwoSetOne !== null ? match.playerTwoSetOne : playerTwoSetScore }
           </p>
-          { activeSet >= 2 || match.playerOneSetOne || match.playerTwoSetOne ?
+          { displaySetTwo ?
             <p style={{ gridColumnStart: 4, gridRowStart: 3, textAlign: 'center' }}>
               {match.playerTwoSetTwo !== null ? match.playerTwoSetTwo : playerTwoSetScore}
             </p> : null
           }
-          { activeSet >= 3 || match.playerOneSetTwo || match.playerTwoSetTwo ?
+          { displaySetThree ?
             <p style={{ gridColumnStart: 5, gridRowStart: 3, textAlign: 'center' }}>
               {match.playerTwoSetThree !== null ? match.playerTwoSetThree : playerTwoSetScore }
             </p> : null
           }
-          { activeSet >= 4 || match.playerOneSetThree || match.playerTwoSetThree ?
+          { displaySetFour ?
             <p style={{ gridColumnStart: 6, gridRowStart: 3, textAlign: 'center' }}>
               {match.playerTwoSetFour !== null ? match.playerTwoSetFour : playerTwoSetScore }
             </p> : null
           }
-          { activeSet >= 5 || match.playerOneSetFour || match.playerTwoSetFour ?
+          { displaySetFive ?
             <p style={{ gridColumnStart: 7, gridRowStart: 3, textAlign: 'center' }}>
               {match.playerTwoSetFive !== null ? match.playerTwoSetFive : playerTwoSetScore }
             </p> : null
